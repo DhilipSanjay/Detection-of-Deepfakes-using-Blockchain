@@ -5,11 +5,11 @@ const getIpfsRecord = async (ipfsHash) => {
         response = await response.json();
 
         if(response){
-            console.log("IpfsRecord fetched successfully", response);
+            console.log("Document fetched successfully", response);
             return response;
         }
         else{
-            console.log("No record with the ipfsHash found", response);
+            console.log("No Document with the ipfsHash found", response);
             return null;
         }
     })

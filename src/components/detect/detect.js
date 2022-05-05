@@ -1,7 +1,8 @@
 import React, { Component } from "react";
+import generateIpfsOnlyHash from "../../services/generateIpfsOnlyHash";
 import getIpfsRecord from "../../services/getIpfsRecord";
 import getWeb3 from "../../services/getweb3";
-import ipfs from "../../services/ipfs";
+import verifyTransaction from "../../services/verifyTransaction";
 
 class DetectPage extends Component{
     
@@ -32,60 +33,56 @@ class DetectPage extends Component{
 
     captureFile(event){
         event.preventDefault();
-        const file = event.target.files[0];
-        const reader = new window.FileReader();
-        reader.readAsArrayBuffer(file);
-        reader.onloadend = () => {
-            this.setState({ buffer : Buffer(reader.result)});
+        try{
+            const file = event.target.files[0];
+            const reader = new window.FileReader();
+            reader.readAsArrayBuffer(file);
+            reader.onloadend = () => {
+                this.setState({ buffer : Buffer(reader.result)});
+            }
+        }
+        catch(error){
+            console.error(error);
         }
     }
 
     async onSubmit(event){
         event.preventDefault();
-        console.log("buffer", this.state.buffer);
-        const result = await ipfs.add(this.state.buffer, {"only-hash" : true});
-        const generateIpfsHash = result.path;
 
-        const response = await getIpfsRecord(generateIpfsHash);
-        console.log(generateIpfsHash, response);
+        // Generate IPFS hash of the uploaded media - to detect deepfake
+        const generatedIpfsHash = await generateIpfsOnlyHash(this.state.buffer);
 
-        if(!response){
+        // Check if the document with the correspoding IpfsHash exists - (i.e.) returns the mongoDB Document
+        const mongoResponse = await getIpfsRecord(generatedIpfsHash);
+        console.log(generatedIpfsHash, mongoResponse);
+
+        // Check if the uplaoded media - deepfake / original
+        if(!mongoResponse){
             // No document found in MongoDB => Deepfake
+            // (i.e.) Only original media will be stored.
             console.log("Deepfake");
+            this.setState({
+                displayResult: true,
+                isDeepfake : true
+            });
         }
         else{
             // Document with the ipfsHash is found in MongoDB 
-            // Verify the ipfsHash in blockchain
-            const mongoIpfsHash = response.ipfsHash;
-            const chainIpfsHash = await this.fetchTransactionDetails(response.transactionHash);
-            console.log(chainIpfsHash, mongoIpfsHash)
-            if(mongoIpfsHash === chainIpfsHash){
+            // Verify if ipfsHash from mongo is same in the blockchain transaction
+            const result = await verifyTransaction(mongoResponse, this.state.web3);
+            
+            if(result){
                 console.log("Original");
+                this.setState({
+                    displayResult: true,
+                    isDeepfake : false
+                })
             }
             else{
                 console.error("MongoDB has been tampered! Re-index the blockchain");
+                window.alert("Some error occurred. Check console")
             }
-        }   
-    }
-
-    async fetchTransactionDetails(transactionHash){
-        const web3 = this.state.web3;
-        var chainIpfsHash;
-        
-        await web3.eth.getTransaction(transactionHash, async (error, transaction) => {
-            if(error){
-                console.log(error);
-                return;
-            }
-            let transactionData = transaction.input;
-            console.log(transactionData);
-            let inputData = '0x' + transactionData.slice(10);  // get only data without function selector
-
-            let params = await web3.eth.abi.decodeParameters(['string'], inputData);
-            console.log(params);
-            chainIpfsHash = params[0];
-        });
-        return chainIpfsHash;
+        }
     }
 
     render(){
@@ -96,6 +93,14 @@ class DetectPage extends Component{
                     <input type="file" onChange={this.captureFile}/>
                     <input type="submit" />
                 </form>
+                {
+                    this.state.displayResult ?
+                        this.state.isDeepfake ?
+                        <h1>Deepfake</h1>
+                        :
+                        <h1>Original</h1> 
+                    : null
+                }
             </div>
         )
     }
