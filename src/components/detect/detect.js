@@ -3,6 +3,8 @@ import generateIpfsOnlyHash from "../../services/generateIpfsOnlyHash";
 import getIpfsRecord from "../../services/getIpfsRecord";
 import getWeb3 from "../../services/getweb3";
 import verifyTransaction from "../../services/verifyTransaction";
+import TransactionReceipt from "../upload/transactionReceipt";
+import "../upload/upload.css";
 
 class DetectPage extends Component{
     
@@ -11,7 +13,12 @@ class DetectPage extends Component{
 
         this.state = {
             web3: null,
+            ipfsHash: '',
+            transactionReceipt: '',
             buffer: null,
+            fileLabel: 'No file selected',
+            imageURL: '#',
+            isLoading: false,
             displayResult: false,
             isDeepfake: false
         }
@@ -32,13 +39,23 @@ class DetectPage extends Component{
     }
 
     captureFile(event){
-        event.preventDefault();
         try{
+            event.preventDefault();
             const file = event.target.files[0];
+            const url = URL.createObjectURL(file);
+
+            this.setState({
+                fileLabel: file.name,
+                imageURL: url
+            });
             const reader = new window.FileReader();
             reader.readAsArrayBuffer(file);
             reader.onloadend = () => {
-                this.setState({ buffer : Buffer(reader.result)});
+                this.setState({ 
+                    buffer : Buffer(reader.result),
+                }, async () => {
+                    this.onSubmit();
+                  });
             }
         }
         catch(error){
@@ -46,9 +63,7 @@ class DetectPage extends Component{
         }
     }
 
-    async onSubmit(event){
-        event.preventDefault();
-
+    async onSubmit(){
         // Generate IPFS hash of the uploaded media - to detect deepfake
         const generatedIpfsHash = await generateIpfsOnlyHash(this.state.buffer);
 
@@ -56,7 +71,7 @@ class DetectPage extends Component{
         const mongoResponse = await getIpfsRecord(generatedIpfsHash);
         console.log(generatedIpfsHash, mongoResponse);
 
-        // Check if the uplaoded media - deepfake / original
+        // Check if the uploaded media - deepfake / original
         if(!mongoResponse){
             // No document found in MongoDB => Deepfake
             // (i.e.) Only original media will be stored.
@@ -73,32 +88,55 @@ class DetectPage extends Component{
             
             if(result){
                 console.log("Original");
+                const receipt = await this.state.web3.eth.getTransaction(mongoResponse.transactionHash);
+                console.log("Dhiliop" , receipt);
                 this.setState({
                     displayResult: true,
-                    isDeepfake : false
+                    isDeepfake : false,
+                    ipfsHash: generatedIpfsHash,
+                    transactionReceipt: receipt
                 })
             }
             else{
                 console.error("MongoDB has been tampered! Re-index the blockchain");
-                window.alert("Some error occurred. Check console")
+                window.alert("Some error occurred. Check console");
             }
         }
     }
 
     render(){
         return(
+            this.state.isLoading ? 
+            <h2>Loading..</h2>
+            :
             <div>
                 <h1>Detect Deepfake</h1>
-                <form onSubmit={this.onSubmit}>
-                    <input type="file" onChange={this.captureFile}/>
-                    <input type="submit" />
+                <form>
+                    <div className="file-input">                    
+                    <input type='file' onChange={this.captureFile}/>
+                     <span className='button'>Choose</span>
+                    <span className='label'>{this.state.fileLabel}</span>
+                    </div>
                 </form>
                 {
                     this.state.displayResult ?
-                        this.state.isDeepfake ?
-                        <h1>Deepfake</h1>
-                        :
-                        <h1>Original</h1> 
+                    <div> 
+                        {
+                            this.state.isDeepfake ?
+                            <h1>Deepfake Media</h1>
+                            :
+                            <div>
+                            <h1>Original Media</h1>
+                            <TransactionReceipt 
+                                ipfsHash={this.state.ipfsHash}
+                                receipt={this.state.transactionReceipt} 
+                                web3={this.state.web3}
+                            />
+                            </div>
+                        }                   
+                        <img src={this.state.imageURL} className="input-img"/> 
+
+                    </div>
                     : null
                 }
             </div>

@@ -7,6 +7,7 @@ import insertIpfsRecord from "../../services/insertIpfsRecord";
 import generateIpfsOnlyHash from "../../services/generateIpfsOnlyHash";
 import getIpfsRecord from "../../services/getIpfsRecord";
 import verifyTransaction from "../../services/verifyTransaction";
+import "./upload.css";
 
 class UploadPage extends Component{
 
@@ -19,6 +20,7 @@ class UploadPage extends Component{
             buffer: '',
             address: '',
             transactionReceipt: '',
+            fileLabel: 'No file selected',
             uploaded: false,
             isLoading: false
         }
@@ -33,19 +35,15 @@ class UploadPage extends Component{
             web3: results.web3,
             isLoading: true
           }, async () => {
-            const accounts =  await this.state.web3.eth.getAccounts();
-            console.log(accounts)
             this.instantiateContract();
-          }) 
+          }); 
         })
         .catch((e) => {
           console.log(e, 'Error finding web3.')
         })
     }
 
-    async onSubmit(event){
-        event.preventDefault();
-
+    async onSubmit(){
         // Generate IPFS hash of the uploaded media 
         const generatedIpfsHash = await generateIpfsOnlyHash(this.state.buffer);
 
@@ -59,7 +57,7 @@ class UploadPage extends Component{
             const result = await verifyTransaction(mongoResponse, this.state.web3);
             
             if(result){
-                console.log("Duplicate original media - will not be uploaded");
+                window.alert("Duplicate original media - will not be uploaded");
                 return;
             }
             else{
@@ -95,11 +93,19 @@ class UploadPage extends Component{
                         uploaded: true,
                     }, async () => {
                         console.log("Storing Transaction hash & IPFS hash in Mongo DB");
-                        await insertIpfsRecord(this.state.ipfsHash, this.state.transactionReceipt.transactionHash);
+                        await insertIpfsRecord(
+                            this.state.ipfsHash, 
+                            this.state.transactionReceipt.transactionHash, 
+                            this.state.transactionReceipt.from);
                         this.setState({isLoading: false});
                         });                    
                     })
-                }); 
+                .catch((error) =>{
+                    console.error(error);
+                    window.alert("Some error occurred. Check the console!");
+                    this.setState({isLoading: false});
+                });
+            }); 
             }
         }
     }
@@ -108,10 +114,15 @@ class UploadPage extends Component{
         try{
             event.preventDefault();
             const file = event.target.files[0];
+            this.setState({fileLabel: file.name});
             const reader = new window.FileReader();
             reader.readAsArrayBuffer(file);
             reader.onloadend = () => {
-                this.setState({ buffer : Buffer(reader.result)});
+                this.setState({ 
+                    buffer : Buffer(reader.result),
+                }, async () => {
+                    this.onSubmit();
+                  });
             }
         }
         catch(error){
@@ -141,23 +152,28 @@ class UploadPage extends Component{
         return(
             
             this.state.isLoading ? 
-            <h2>Loading</h2>
+            <h2>Loading..</h2>
             :
             <div>
                 <h1> Upload the original Media </h1>
-                <form onSubmit={this.onSubmit}>
-                    <input type="file"  onChange={this.captureFile}/>
-                    <input type="submit" />
+                <form>
+                    <div className="file-input">                    
+                    <input type='file' onChange={this.captureFile}/>
+                     <span className='button'>Choose</span>
+                    <span className='label'>{this.state.fileLabel}</span>
+                    </div>
                 </form>
 
                 {
                     this.state.uploaded ?
                     <div>
-                        <img src={`http://localhost:8080/ipfs/${this.state.ipfsHash}`} alt=""/>
                         <TransactionReceipt 
                             ipfsHash={this.state.ipfsHash}
                             receipt={this.state.transactionReceipt} 
                             web3={this.state.web3} />
+                        
+                        <img className="input-img" src={`http://localhost:8080/ipfs/${this.state.ipfsHash}`} alt=""/>
+                        
                     </div>
                     : null
                 }

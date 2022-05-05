@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import fetchTransactionDetails from "../../services/fetchTransactionIpfsHash";
 import getAllIpfsRecords from "../../services/getAllIpfsRecords";
 import getWeb3 from "../../services/getweb3";
 import verifyTransaction from "../../services/verifyTransaction";
@@ -49,7 +48,11 @@ class AllOriginalsPage extends Component{
             this.state.isLoading ? 
             <h2>Loading</h2>
             :
-            <AllOriginalsTable allTransactions={this.state.allTransactions} />
+            <div>
+                <h1>All the Uploaded Original Media</h1> 
+                <AllOriginalsTable allTransactions={this.state.allTransactions} />
+            </div>
+
         );
     }
 }

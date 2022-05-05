@@ -19,8 +19,8 @@ class TransactionReceipt extends Component{
             ipfsHash: this.props.ipfsHash,
             address: this.props.receipt.from,
             blockNumber: this.props.receipt.blockNumber,
-            transactionHash: this.props.receipt.transactionHash,
-            gasUsed: this.props.receipt.gasUsed.toString() + " Wei"
+            transactionHash: this.props.receipt.transactionHash || this.props.receipt.hash,
+            gasUsed: this.props.receipt.gasUsed || this.props.receipt.gas + " Wei"
         })
     }
 

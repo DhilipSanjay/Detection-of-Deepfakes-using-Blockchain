@@ -1,5 +1,3 @@
-import getWeb3 from "./getweb3";
-
 const fetchTransactionDetails = async (transactionHash, web3) => {
     var chainIpfsHash;
     

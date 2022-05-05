@@ -1,10 +1,8 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500&display=swap');
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+  font-family: 'Manrope', 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -14,4 +12,47 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+table {
+  width: 700px;
+  text-align: center;
+  border: 1px solid #fff;
+  border-spacing: 1px;
+  margin: auto;
+}
+
+caption {
+  font-weight: bold;
+}
+
+table td {
+  padding: 15px;
+  background-color: #F8F7FE;
+}
+
+table th {
+  background-color: #6B7CDE;
+  color: #fff;
+  padding: 15px;
+}
+
+.tablefoot {
+  padding: 0;
+  border-bottom: 3px solid #009688;
+}
+
+.home-btn {
+  display: inline-block;
+  cursor: pointer;
+  font-size: large;
+  background: rgb(203, 202, 202);
+  padding: 8px 16px;
+  border-radius: 2px;
+  margin-right: 8px;
+}
+
+.home-btn:hover {
+  background: dodgerblue;
+  color: white;
 }

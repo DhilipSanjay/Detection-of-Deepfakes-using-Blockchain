@@ -1,19 +1,31 @@
-import React from "react";
-import {Navbar, Container, Nav} from "react-bootstrap";
+import React, { Component } from "react";
+import './NavBar.css';
+import {Link} from 'react-router-dom';
 
-const NavBar = () => {
-    return(
-        <Navbar bg="dark" variant="dark">
-        <Container>
-        <Navbar.Brand href="#home">Navbar</Navbar.Brand>
-        <Nav className="me-auto">
-          <Nav.Link href="#home">Home</Nav.Link>
-          <Nav.Link href="#features">Features</Nav.Link>
-          <Nav.Link href="#pricing">Pricing</Nav.Link>
-        </Nav>
-        </Container>
-      </Navbar>
-    )
+class NavBar extends Component {
+    
+    constructor(props){
+        super(props);
+    }
+    
+    render(){
+        return(
+            <div className="nav">
+            <div className="nav-header">
+                <Link className="nav-title nav-links"  to="/">
+                    DEEPFAKE DETECTOR
+                </Link>
+            </div>
+            
+            <div className="nav-links">
+                <Link className="small-btn" to="/upload">Upload</Link>
+                <Link className="small-btn" to="/detect">Detect</Link>
+                <Link className="small-btn" to="/allOriginals">View all</Link>
+                <Link className="small-btn" to="/">Address: {this.props.address}</Link>
+            </div>
+        </div>
+        );
+    }
 }
 
 export default NavBar;
