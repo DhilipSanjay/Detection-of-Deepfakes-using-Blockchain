@@ -1,4 +1,4 @@
-import fetchTransactionDetails from "./fetchTransactionDetails";
+import fetchTransactionDetails from "./fetchTransactionIpfsHash";
 
 const verifyTransaction = async (response, web3) => {
     const mongoIpfsHash = response.ipfsHash;
