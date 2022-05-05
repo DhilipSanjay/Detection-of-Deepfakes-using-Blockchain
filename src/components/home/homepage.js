@@ -14,7 +14,7 @@ class HomePage extends Component{
                 <div className="p-4 lg:text-5xl md:text-3xl sm:text-2xl text-2xl text-center text-secondary mb-10 grid gap-4">
                     <p>Detect Deepfakes using Blockchain</p> 
                     <Link to="/upload"><button>Upload Original Media</button></Link>
-                    <button>Detect Deepfakes</button>
+                    <Link to="/detect"><button>Detect Deepfakes</button></Link>
                 </div>
                 </div>
             </div>

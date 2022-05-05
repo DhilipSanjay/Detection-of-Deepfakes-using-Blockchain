@@ -5,6 +5,7 @@ import React, { Component } from 'react';
 import Web3 from 'web3';
 import HomePage from './components/home/homepage';
 import UploadPage from './components/upload/upload';
+import DetectPage from './components/detect/detect';
 
 class App extends Component {
 
@@ -33,6 +34,7 @@ class App extends Component {
         <Routes>
           <Route path="/" exact element={<HomePage />}/>
           <Route path="/upload" exact element={<UploadPage />}/>
+          <Route path="/detect" exact element={<DetectPage />}/>
         </Routes>
       </div>
       </Router>

@@ -20,7 +20,7 @@ class TransactionReceipt extends Component{
             address: this.props.receipt.from,
             blockNumber: this.props.receipt.blockNumber,
             transactionHash: this.props.receipt.transactionHash,
-            gasUsed: this.props.receipt.gasUsed.toString() + "Wei"
+            gasUsed: this.props.receipt.gasUsed.toString() + " Wei"
         })
     }
 
