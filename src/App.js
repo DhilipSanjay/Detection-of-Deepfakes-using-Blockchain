@@ -7,6 +7,7 @@ import HomePage from './components/home/homepage';
 import UploadPage from './components/upload/upload';
 import DetectPage from './components/detect/detect';
 import AllOriginalsPage from './components/alloriginals/allOriginals';
+import NavBar from './components/common/NavBar';
 
 class App extends Component {
 
@@ -32,6 +33,7 @@ class App extends Component {
     return (
       <Router>
       <div className="App">
+        <NavBar />
         <Routes>
           <Route path="/" exact element={<HomePage />}/>
           <Route path="/upload" exact element={<UploadPage />}/>
