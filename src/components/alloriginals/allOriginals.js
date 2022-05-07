@@ -14,8 +14,8 @@ class AllOriginalsPage extends Component{
         }
     }
 
-    componentWillMount(){
-        getWeb3.then(async (results)  => {
+    componentDidMount(){
+        getWeb3().then(async (results)  => {
             this.setState({
               web3: results.web3,
               allTransactions: null,
@@ -52,7 +52,6 @@ class AllOriginalsPage extends Component{
                 <h1>All the Uploaded Original Media</h1> 
                 <AllOriginalsTable allTransactions={this.state.allTransactions} />
             </div>
-
         );
     }
 }

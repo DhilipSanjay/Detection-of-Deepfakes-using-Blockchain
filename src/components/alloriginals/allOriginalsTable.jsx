@@ -1,11 +1,6 @@
 import React, { Component } from "react";
 
 class AllOriginalsTable extends Component{
-
-    constructor(props){
-        super(props);
-    }
-
     render() {
         return (
             <div>
@@ -22,9 +17,17 @@ class AllOriginalsTable extends Component{
                     <tbody>
                 
                     {
+                        this.props.allTransactions.length === 0?
+                        <tr>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                        </tr>
+                        :
                         this.props.allTransactions.map(
                             (transaction, i) => 
-                            <tr>
+                            <tr key={i+1}>
                                 <td>{i+1}</td>
                                 <td>{transaction.ipfsHash}<br/>{transaction.transactionHash}</td>
                                 <td>{transaction.account}</td>

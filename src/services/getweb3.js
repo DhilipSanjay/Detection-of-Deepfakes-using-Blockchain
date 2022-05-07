@@ -1,39 +1,31 @@
 import Web3 from 'web3'
 
-let getWeb3 = new Promise(function(resolve, reject) {
-  // Wait for loading completion to avoid race conditions with web3 injection timing.
-  window.addEventListener('load', async function() {
-    var results
-    var web3 = window.web3
-
-    // Checking if Web3 has been injected by the browser (Mist/MetaMask)
-    if (typeof web3 !== 'undefined') {
-      // Use Mist/MetaMask's provider.
-      web3 = new Web3(web3.currentProvider)
-
-      results = {
-        web3: web3
+const getWeb3 = async () => { 
+    var results = null;
+    try{
+      if (window.ethereum) {
+        console.log("Window.ethereum");
+        window.web3 = new Web3(window.ethereum);
+        await window.ethereum.enable();
+        results = {
+          web3: window.web3
+        }
+      } 
+      else if(window.web3){
+        window.web3 = new Web3(window.web3.currentProvider);
+        console.log("Window.web3");
+        results = {
+          web3: window.web3.currentProvider
+        }
       }
-
-      console.log('Injected web3 detected.');
-
-      resolve(results)
-    } else {
-      // Fallback to localhost if no web3 injection. We've configured this to
-      // use the development console's port by default.
-      var provider = new Web3.providers.HttpProvider('http://127.0.0.1:9545')
-
-      web3 = new Web3(provider)
-
-      results = {
-        web3: web3
+      else{
+        window.alert("Non-Ethereum browser detected. Install MetaMask!");
       }
-
-      console.log('No web3 instance injected, using Local web3.');
-
-      resolve(results)
+    }catch(error){
+      window.alert("Error Occurred!");
+      console.error(error);
     }
-  })
-})
+    return results;
+  }
 
-export default getWeb3
+export default getWeb3;

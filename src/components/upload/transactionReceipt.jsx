@@ -14,7 +14,7 @@ class TransactionReceipt extends Component{
         }
     }
 
-    componentWillMount(){
+    componentDidMount(){
         this.setState({
             ipfsHash: this.props.ipfsHash,
             address: this.props.receipt.from,

@@ -27,8 +27,8 @@ class DetectPage extends Component{
         this.onSubmit = this.onSubmit.bind(this);
     }
 
-    componentWillMount(){
-        getWeb3.then((results)  => {
+    componentDidMount(){
+        getWeb3().then((results)  => {
             this.setState({
               web3: results.web3
             })
@@ -133,7 +133,7 @@ class DetectPage extends Component{
                             />
                             </div>
                         }                   
-                        <img src={this.state.imageURL} className="input-img"/> 
+                        <img src={this.state.imageURL} alt="" className="input-img"/> 
 
                     </div>
                     : null

@@ -29,8 +29,8 @@ class UploadPage extends Component{
         this.onSubmit = this.onSubmit.bind(this);
     }
 
-    componentWillMount() {
-        getWeb3.then((results)  => {
+    componentDidMount() {
+        getWeb3().then((results)  => {
           this.setState({
             web3: results.web3,
             isLoading: true
