@@ -6,13 +6,19 @@ const fetchTransactionDetails = async (transactionHash, web3) => {
             console.log(error);
             return;
         }
-        let transactionData = transaction.input;
-        console.log(transactionData);
-        let inputData = '0x' + transactionData.slice(10);  // get only data without function selector
-
-        let params = await web3.eth.abi.decodeParameters(['string'], inputData);
-        console.log(params);
-        chainIpfsHash = params[0];
+        try{
+            let transactionData = transaction.input;
+            console.log(transactionData);
+            let inputData = '0x' + transactionData.slice(10);  // get only data without function selector
+    
+            let params = await web3.eth.abi.decodeParameters(['string'], inputData);
+            console.log(params);
+            chainIpfsHash = params[0];
+        }
+        catch(error){
+            console.error(error);
+        }
+       
     });
     return chainIpfsHash;
 }
