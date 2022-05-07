@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import config from "../../config/config.json";
 
 class AllOriginalsTable extends Component{
     render() {
@@ -31,7 +32,7 @@ class AllOriginalsTable extends Component{
                                 <td>{i+1}</td>
                                 <td>{transaction.ipfsHash}<br/>{transaction.transactionHash}</td>
                                 <td>{transaction.account}</td>
-                                <td><img width="100px" src={`http://localhost:8080/ipfs/${transaction.ipfsHash}`} alt="" /></td>
+                                <td><img width="100px" src={`http://${config.ipfs_host}/ipfs/${transaction.ipfsHash}`} alt="" /></td>
                             </tr>
                         )
                     }

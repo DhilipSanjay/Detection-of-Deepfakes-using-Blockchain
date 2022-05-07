@@ -8,6 +8,7 @@ import generateIpfsOnlyHash from "../../services/generateIpfsOnlyHash";
 import getIpfsRecord from "../../services/getIpfsRecord";
 import verifyTransaction from "../../services/verifyTransaction";
 import "./upload.css";
+import config from "../../config/config.json";
 
 class UploadPage extends Component{
 
@@ -76,36 +77,41 @@ class UploadPage extends Component{
             if(ipfsResult){
                 console.log("Uploaded successfully", ipfsResult);
 
-                // Fetch the IPFS hash from the result
-                this.setState({ ipfsHash: ipfsResult.path }, () => {
-                console.log("ifpsHash", this.state.ipfsHash);
-                
-                // Store the IPFS hash in blockchain
-                console.log('Executing Smart contract');
-                this.ipfsStorageInstance.sendHash(ipfsResult.path, { from: this.state.address })
-                .then((receipt)  => {
-                    console.log("Transaction Receipt", receipt);
-                    receipt = receipt.receipt; 
+                try{
+                    // Fetch the IPFS hash from the result
+                    this.setState({ ipfsHash: ipfsResult.path }, () => {
+                    console.log("ifpsHash", this.state.ipfsHash);
                     
-                    // Store the IpfsHash and TransactionHash in MongoDB
-                    this.setState({
-                        transactionReceipt : receipt,
-                        uploaded: true,
-                    }, async () => {
-                        console.log("Storing Transaction hash & IPFS hash in Mongo DB");
-                        await insertIpfsRecord(
-                            this.state.ipfsHash, 
-                            this.state.transactionReceipt.transactionHash, 
-                            this.state.transactionReceipt.from);
+                    // Store the IPFS hash in blockchain
+                    console.log('Executing Smart contract');
+                    this.ipfsStorageInstance.sendHash(ipfsResult.path, { from: this.state.address })
+                    .then((receipt)  => {
+                        console.log("Transaction Receipt", receipt);
+                        receipt = receipt.receipt; 
+                        
+                        // Store the IpfsHash and TransactionHash in MongoDB
+                        this.setState({
+                            transactionReceipt : receipt,
+                            uploaded: true,
+                        }, async () => {
+                            console.log("Storing Transaction hash & IPFS hash in Mongo DB");
+                            await insertIpfsRecord(
+                                this.state.ipfsHash, 
+                                this.state.transactionReceipt.transactionHash, 
+                                this.state.transactionReceipt.from);
+                            this.setState({isLoading: false});
+                            });                    
+                        })
+                    .catch((error) =>{
+                        console.error(error);
+                        window.alert("Some error occurred. Check the console!");
                         this.setState({isLoading: false});
-                        });                    
-                    })
-                .catch((error) =>{
+                    });
+                    }); 
+                }
+                catch(error){
                     console.error(error);
-                    window.alert("Some error occurred. Check the console!");
-                    this.setState({isLoading: false});
-                });
-            }); 
+                }
             }
         }
     }
@@ -133,19 +139,23 @@ class UploadPage extends Component{
     async instantiateContract(){
         const contract = require('@truffle/contract')
         const ipfsStorage = contract(IpfsStorageContract)
-       
+        
         ipfsStorage.setProvider(this.state.web3.currentProvider)
-   
-        this.state.web3.eth.getAccounts((error, accounts) => {
-        ipfsStorage.deployed().then((instance) => {
-            this.ipfsStorageInstance = instance
-            this.setState({ 
-                address: accounts[0],
-                isLoading: false
-            })
-        })
-    })
-
+       
+        try{
+            this.state.web3.eth.getAccounts((error, accounts) => {
+            ipfsStorage.deployed().then((instance) => {
+                this.ipfsStorageInstance = instance
+                this.setState({ 
+                    address: accounts[0],
+                    isLoading: false
+                    });
+                });
+            });
+        }
+        catch(error){
+            console.error(error);
+        }
     }
 
     render(){
@@ -172,7 +182,7 @@ class UploadPage extends Component{
                             receipt={this.state.transactionReceipt} 
                             web3={this.state.web3} />
                         
-                        <img className="input-img" src={`http://localhost:8080/ipfs/${this.state.ipfsHash}`} alt=""/>
+                        <img className="input-img" src={`http://${config.ipfs_host}/ipfs/${this.state.ipfsHash}`} alt=""/>
                         
                     </div>
                     : null
