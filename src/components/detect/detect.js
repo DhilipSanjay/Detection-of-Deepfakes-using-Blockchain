@@ -89,7 +89,6 @@ class DetectPage extends Component{
             if(result){
                 console.log("Original");
                 const receipt = await this.state.web3.eth.getTransaction(mongoResponse.transactionHash);
-                console.log("Dhiliop" , receipt);
                 this.setState({
                     displayResult: true,
                     isDeepfake : false,

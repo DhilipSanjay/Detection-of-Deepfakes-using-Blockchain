@@ -1,5 +1,5 @@
 {
-  "name": "deepfake-detector",
+  "name": "source-of-truth",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
