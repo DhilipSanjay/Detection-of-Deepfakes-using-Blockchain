@@ -1,8 +1,8 @@
-import fetchTransactionDetails from "./fetchTransactionIpfsHash";
+import fetchTransactionIpfsHash from "./fetchTransactionIpfsHash";
 
 const verifyTransaction = async (response, web3) => {
     const mongoIpfsHash = response.ipfsHash;
-    const chainIpfsHash = await fetchTransactionDetails(response.transactionHash, web3);
+    const chainIpfsHash = await fetchTransactionIpfsHash(response.transactionHash, web3);
     console.log("verifyTransaction", chainIpfsHash, mongoIpfsHash);
 
     if(mongoIpfsHash === chainIpfsHash){

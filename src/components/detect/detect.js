@@ -5,6 +5,8 @@ import getWeb3 from "../../services/getweb3";
 import verifyTransaction from "../../services/verifyTransaction";
 import TransactionReceipt from "../upload/transactionReceipt";
 import "../upload/upload.css";
+import searchBlockChainFromLatest from "../../services/searchBlockChainFromLatest";
+import searchBlockChainFromEarliest from "../../services/searchBlockChainFromEarliest";
 
 class DetectPage extends Component{
     
@@ -54,7 +56,20 @@ class DetectPage extends Component{
                 this.setState({ 
                     buffer : Buffer(reader.result),
                 }, async () => {
-                    this.onSubmit();
+                    var startTime = performance.now();
+                    await this.onSubmit();
+                    var endTime = performance.now();
+                    console.debug(`Call to onSubmit took ${endTime - startTime} milliseconds or ${(endTime - startTime)/1000} seconds`);
+                    
+                    startTime = performance.now();
+                    await searchBlockChainFromLatest(this.state.web3, this.state.buffer);
+                    endTime = performance.now();
+                    console.debug(`Call to searchBlockChainFromLatest took ${endTime - startTime} milliseconds or ${(endTime - startTime)/1000} seconds`);
+
+                    startTime = performance.now();
+                    await searchBlockChainFromEarliest(this.state.web3, this.state.buffer);
+                    endTime = performance.now();
+                    console.debug(`Call to searchBlockChainFromEarliest took ${endTime - startTime} milliseconds or ${(endTime - startTime)/1000} seconds`);
                   });
             }
         }
@@ -94,7 +109,7 @@ class DetectPage extends Component{
                     isDeepfake : false,
                     ipfsHash: generatedIpfsHash,
                     transactionReceipt: receipt
-                })
+                });
             }
             else{
                 console.error("MongoDB has been tampered! Re-index the blockchain");

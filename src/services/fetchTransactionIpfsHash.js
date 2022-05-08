@@ -1,4 +1,4 @@
-const fetchTransactionDetails = async (transactionHash, web3) => {
+const fetchTransactionIpfsHash = async (transactionHash, web3) => {
     var chainIpfsHash;
     
     await web3.eth.getTransaction(transactionHash, async (error, transaction) => {
@@ -23,4 +23,4 @@ const fetchTransactionDetails = async (transactionHash, web3) => {
     return chainIpfsHash;
 }
 
-export default fetchTransactionDetails;
+export default fetchTransactionIpfsHash;
