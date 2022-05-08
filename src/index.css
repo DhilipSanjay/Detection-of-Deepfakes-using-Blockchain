@@ -1,5 +1,39 @@
 @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500&display=swap');
 
+:root{
+  --light: #FFF7FF;
+  --dark: #1B1E21;
+  --secondary-light: #FFFFFF;
+  --secondary-dark: #2b2b2b;
+  --color-primary: #7F00FF;
+  --color-secondary: #BD7BFF;
+
+  --background: var(--light);
+  --foreground: var(--dark);
+  --secondary-bg: var(--secondary-light);
+}
+
+.big-text{
+  padding:10px;
+  font-size: 2rem;
+  font-weight: 800;
+  text-align: center;
+}
+
+.main-title{
+  padding: 10px;
+  letter-spacing: 2px;
+  font-size: 1.5rem;
+  font-weight: 600;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.section{
+  min-height: 85vh;
+  padding: 20px 10px;
+}
+
 body {
   margin: 0;
   font-family: 'Manrope', 'Segoe UI', 'Roboto', 'Oxygen',
@@ -7,6 +41,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: var(--background);
 }
 
 code {

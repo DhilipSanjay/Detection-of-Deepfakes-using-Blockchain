@@ -2,7 +2,7 @@
     height: 50px;
     width: 100%;
     box-sizing: border-box;
-    background-color: #4A4E69;
+    background-color: var(--secondary-dark);
     position: relative;
     display:flex;
     justify-content: space-between;
@@ -37,10 +37,11 @@
     padding: 13px 10px 13px 10px;
     text-decoration: none;
     color: #efefef;
+    cursor: pointer;
   }
   
   .nav > .nav-links > a:hover {
-    background-color: rgba(0, 0, 0, 0.3);
+    background-color: var(--dark);
   }
   
   .nav > #nav-check {

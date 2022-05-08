@@ -7,6 +7,9 @@ import TransactionReceipt from "../upload/transactionReceipt";
 import "../upload/upload.css";
 import searchBlockChainFromLatest from "../../services/searchBlockChainFromLatest";
 import searchBlockChainFromEarliest from "../../services/searchBlockChainFromEarliest";
+import clickImg from "../../img/click.png"
+import uploadImg from "../../img/upload.png"
+import detectImg from "../../img/detect.png"
 
 class DetectPage extends Component{
     
@@ -123,21 +126,52 @@ class DetectPage extends Component{
             this.state.isLoading ? 
             <h2>Loading..</h2>
             :
-            <div>
-                <h1>Detect Deepfake</h1>
+            <div className="section">
+                <div class="big-text">Detect Deepfake</div>
+                <div class="steps">
+                    <div class="single-step">
+                        <img src={clickImg} alt="Click" />
+                        <div class="single-step-content">
+                            <div class="main-title">Click</div>
+                            <p>Take or choose a media from your device</p>
+                        </div>
+                    </div>
+                    
+                    <div class="single-step">
+                        <img src={uploadImg} alt="Upload" />
+                        <div class="single-step-content">
+                        <div class="main-title">Upload</div>
+                        <p>Upload the media to <b>Source of Truth</b> DApp</p>
+                        </div>
+                    </div>
+                    <div class="single-step">
+                    <img src={detectImg} alt="Detect" />
+                    <div class="single-step-content">
+                        <div class="main-title">Detect</div>
+                        <p>Detect if the media is original or deepfake</p>
+                    </div>
+                    </div>
+                </div>
+
+                <br/>
+                <h1>Browse Files</h1>
                 <form>
                     <div className="file-input">                    
                     <input type='file' onChange={this.captureFile}/>
-                     <span className='button'>Choose</span>
+                     <button>Choose</button>
                     <span className='label'>{this.state.fileLabel}</span>
                     </div>
                 </form>
+                <br/>
                 {
                     this.state.displayResult ?
                     <div> 
                         {
                             this.state.isDeepfake ?
-                            <h1>Deepfake Media</h1>
+                            <div>
+                                <h1>Deepfake Media</h1>
+                                {/* <p>If this media is original, then you might not have uploaded this media to our system. Consider uploading <Link to="/upload">here</Link>.</p> */}
+                            </div>
                             :
                             <div>
                             <h1>Original Media</h1>

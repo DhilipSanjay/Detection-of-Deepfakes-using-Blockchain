@@ -1,0 +1,33 @@
+.section.main{
+    background: linear-gradient(to right, rgba(0, 0, 0, 1) 0%,  rgba(0, 0, 0, .65) 100%), url(../../img/about.jpg);
+    background-color: var(--color-primary);
+    color: var(--light);
+    margin: 0px;
+    padding-top:60px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 20px;
+    align-items: center;
+    text-align: center;
+}
+
+.section.main p{
+    text-align: justify;
+
+    padding: 10px 20px;
+    text-indent: 40px;
+}
+  
+button{
+    margin: 10px 5px;
+    padding: 10px 25px;
+    font-size: 20px;
+    font-weight: 600;
+    border: none; 
+    outline: none;
+    background: var(--color-primary);
+    color: var(--light);
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+  }

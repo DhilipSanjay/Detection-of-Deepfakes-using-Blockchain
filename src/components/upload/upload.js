@@ -9,6 +9,9 @@ import getIpfsRecord from "../../services/getIpfsRecord";
 import verifyTransaction from "../../services/verifyTransaction";
 import "./upload.css";
 import config from "../../config/config.json";
+import clickImg from "../../img/click.png"
+import uploadImg from "../../img/upload.png"
+import metamaskImg from "../../img/metamask.png"
 
 class UploadPage extends Component{
 
@@ -164,16 +167,43 @@ class UploadPage extends Component{
             this.state.isLoading ? 
             <h2>Loading..</h2>
             :
-            <div>
-                <h1> Upload the original Media </h1>
+            <div class="section">
+                <div class="big-text">Upload the original Media</div>
+                <div class="steps">
+                    <div class="single-step">
+                        <img src={clickImg} alt="Click" />
+                        <div class="single-step-content">
+                            <div class="main-title">Click</div>
+                            <p>Take or choose a media from your device</p>
+                        </div>
+                    </div>
+                    
+                    <div class="single-step">
+                        <img src={uploadImg} alt="Upload" />
+                        <div class="single-step-content">
+                        <div class="main-title">Upload</div>
+                        <p>Upload the media to <b>Source of Truth</b> DApp</p>
+                        </div>
+                    </div>
+                    <div class="single-step">
+                    <img src={metamaskImg} alt="Metamask" />
+                    <div class="single-step-content">
+                        <div class="main-title">Approve</div>
+                        <p>Approve the transaction in Metamask</p>
+                    </div>
+                    </div>
+                </div>
+
+                <br/>
+                <h2>Browse Media File</h2>
                 <form>
                     <div className="file-input">                    
                     <input type='file' onChange={this.captureFile}/>
-                     <span className='button'>Choose</span>
+                     <button>Choose</button>
                     <span className='label'>{this.state.fileLabel}</span>
                     </div>
                 </form>
-
+                <br/>
                 {
                     this.state.uploaded ?
                     <div>

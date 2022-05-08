@@ -45,6 +45,7 @@ class NavBar extends Component {
 
       localStorage.removeItem('isConnected');
       localStorage.removeItem('address');
+      window.location.href = "/";
     }
     
     render(){
@@ -52,7 +53,7 @@ class NavBar extends Component {
             <div className="nav">
             <div className="nav-header">
                 <Link className="nav-title nav-links"  to="/">
-                    DEEPFAKE DETECTOR
+                    SOURCE OF TRUTH
                 </Link>
             </div>
             
@@ -63,11 +64,11 @@ class NavBar extends Component {
                 <Link className="small-btn" to="/detect">Detect</Link>
                 <Link className="small-btn" to="/allOriginals">View all</Link>
                 <Link className="small-btn" to="/">Address: {this.state.address}</Link>
-                <button className="small-btn" onClick={this.logout}>Logout</button>
+                <a className="small-btn" onClick={this.logout}>Logout</a>
             </div>
             :
             <div className="nav-links">
-                <button className="small-btn" onClick={this.login}>Login</button>
+                <a className="small-btn" onClick={this.login}>Login</a>
             </div>
             }
         </div>

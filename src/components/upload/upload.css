@@ -2,7 +2,7 @@
 .file-input {
     display: inline-block;
     text-align: left;
-    background: #FFF7FF;
+    background-color: var(--secondary-bg);
     padding: 16px;
     width: 450px;
     position: relative;
@@ -50,4 +50,59 @@
     max-width:60%;
     overflow:hidden;
     margin:20px 0;
+}
+
+.steps{
+  display: grid;
+  place-items: center;
+  grid-gap: 40px 50px;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.steps{
+  justify-content: stretch;
+  margin: 20px 30px;
+}
+
+.single-step{
+  background-color: var(--secondary-bg);
+  display: grid;
+  padding-top: 20px;
+  grid-template-rows: auto auto;
+  grid-gap: 10px;
+  justify-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.single-step-content{
+  align-self: flex-start;
+  padding: 5px 10px 20px;
+  font-size: 1.1rem;
+  text-align: center;
+}
+
+.single-step img{
+  max-width: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  padding: 10px;
+}
+.single-step img{
+  border-radius: 0;
+  max-width: 100px;
+}
+
+@media screen and (max-width: 800px) {
+  .steps{
+    grid-template-columns: 1fr;
+  }
+
+  .single-step{
+    padding-top: 0px;
+    grid-template-columns: 1fr 2fr;
+    grid-template-rows: 1fr;
+    justify-content: space-around;
+    align-items: center;
+  }
 }
