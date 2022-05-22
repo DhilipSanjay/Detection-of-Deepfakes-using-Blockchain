@@ -7,14 +7,14 @@ class HomePage extends Component{
     return(
 
 
-        <div id="about" class="section main">
+        <div id="about" className="section main">
         
         <div>
             <img src={home} alt="home"/>
         </div>
         
         <div>
-            <div class="big-text">
+            <div className="big-text">
                 Are you seeing real or fake media?
             </div>
 
@@ -26,7 +26,7 @@ class HomePage extends Component{
             Deepfake Technology has been used to spread disinformation by creating fake news. It has also been used for creating malicious hoaxes, political fraud or fake adult videos. Deepfakes can influence public opinions, election results, trigger ethnic violence or escalate situations that can lead to armed conflicts.
             </p>
 
-            <div class="main-title">
+            <div className="main-title">
                 About the project
             </div>
             

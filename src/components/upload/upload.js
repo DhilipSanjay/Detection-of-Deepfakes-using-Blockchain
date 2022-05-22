@@ -24,6 +24,7 @@ class UploadPage extends Component{
             buffer: '',
             address: '',
             transactionReceipt: '',
+            fileType: '',
             fileLabel: 'No file selected',
             uploaded: false,
             isLoading: false
@@ -31,6 +32,7 @@ class UploadPage extends Component{
 
         this.captureFile = this.captureFile.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
+        this.isValidFileUploaded = this.isValidFileUploaded.bind(this);
     }
 
     componentDidMount() {
@@ -45,6 +47,12 @@ class UploadPage extends Component{
         .catch((e) => {
           console.log(e, 'Error finding web3.')
         })
+    }
+
+    isValidFileUploaded(file) {
+        const validFileFormat = ['image', 'video'];
+        const fileFormat = file.type.split('/')[0];
+        return validFileFormat.includes(fileFormat);
     }
 
     async onSubmit(){
@@ -99,7 +107,8 @@ class UploadPage extends Component{
                         }, async () => {
                             console.log("Storing Transaction hash & IPFS hash in Mongo DB");
                             await insertIpfsRecord(
-                                this.state.ipfsHash, 
+                                this.state.ipfsHash,
+                                this.state.fileType, 
                                 this.state.transactionReceipt.transactionHash, 
                                 this.state.transactionReceipt.from);
                             this.setState({isLoading: false});
@@ -122,17 +131,31 @@ class UploadPage extends Component{
     captureFile(event){
         try{
             event.preventDefault();
-            const file = event.target.files[0];
-            this.setState({fileLabel: file.name});
-            const reader = new window.FileReader();
-            reader.readAsArrayBuffer(file);
-            reader.onloadend = () => {
-                this.setState({ 
-                    buffer : Buffer(reader.result),
-                }, async () => {
-                    this.onSubmit();
-                  });
+            if(event.target.files.length < 1){
+                window.alert("Upload media file!");
+                return;
             }
+            const file = event.target.files[0];
+            if(this.isValidFileUploaded(file)){
+                this.setState({
+                    fileLabel: file.name,
+                    fileType: file.type.split('/')[0]
+                });
+                const reader = new window.FileReader();
+                reader.readAsArrayBuffer(file);
+                reader.onloadend = () => {
+                    this.setState({ 
+                        buffer : Buffer(reader.result),
+                    }, async () => {
+                        this.onSubmit();
+                    });
+                }
+            }
+            else{
+                window.alert("Currently only image and video files are supported!");
+                return;
+            }
+            
         }
         catch(error){
             console.error(error);
@@ -167,28 +190,28 @@ class UploadPage extends Component{
             this.state.isLoading ? 
             <h2>Loading..</h2>
             :
-            <div class="section">
-                <div class="big-text">Upload the original Media</div>
-                <div class="steps">
-                    <div class="single-step">
+            <div className="section">
+                <div className="big-text">Upload the original Media</div>
+                <div className="steps">
+                    <div className="single-step">
                         <img src={clickImg} alt="Click" />
-                        <div class="single-step-content">
-                            <div class="main-title">Click</div>
+                        <div className="single-step-content">
+                            <div className="main-title">Click</div>
                             <p>Take or choose a media from your device</p>
                         </div>
                     </div>
                     
-                    <div class="single-step">
+                    <div className="single-step">
                         <img src={uploadImg} alt="Upload" />
-                        <div class="single-step-content">
-                        <div class="main-title">Upload</div>
+                        <div className="single-step-content">
+                        <div className="main-title">Upload</div>
                         <p>Upload the media to <b>Source of Truth</b> DApp</p>
                         </div>
                     </div>
-                    <div class="single-step">
+                    <div className="single-step">
                     <img src={metamaskImg} alt="Metamask" />
-                    <div class="single-step-content">
-                        <div class="main-title">Approve</div>
+                    <div className="single-step-content">
+                        <div className="main-title">Approve</div>
                         <p>Approve the transaction in Metamask</p>
                     </div>
                     </div>
@@ -212,7 +235,14 @@ class UploadPage extends Component{
                             receipt={this.state.transactionReceipt} 
                             web3={this.state.web3} />
                         
-                        <img className="input-img" src={`http://${config.ipfs_host}/ipfs/${this.state.ipfsHash}`} alt=""/>
+                        {
+                            this.state.fileType === "image" ?
+                            <img className="input-img" src={`http://${config.ipfs_host}/ipfs/${this.state.ipfsHash}`} alt=""/>
+                            :
+                            <video width="320" height="240" controls>
+                                <source src={`http://${config.ipfs_host}/ipfs/${this.state.ipfsHash}`}/>
+                            </video>
+                        }    
                         
                     </div>
                     : null

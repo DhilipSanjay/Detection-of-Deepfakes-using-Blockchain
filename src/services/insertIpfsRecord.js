@@ -1,12 +1,13 @@
 import getIpfsRecord from "./getIpfsRecord";
 
-const insertIpfsRecord = async (ipfsHash, transactionHash, account) => {
+const insertIpfsRecord = async (ipfsHash, fileType, transactionHash, account) => {
 
     const response = await getIpfsRecord(ipfsHash);
 
     // Insert only if it is not present already
     if(!response){
         var object = { ipfsHash: ipfsHash,
+                        fileType: fileType,
                         transactionHash: transactionHash,
                         account: account};
         await fetch("http://localhost:5000/ipfsRecord/insert", {

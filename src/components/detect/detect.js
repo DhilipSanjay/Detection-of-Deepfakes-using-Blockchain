@@ -22,6 +22,7 @@ class DetectPage extends Component{
             transactionReceipt: '',
             buffer: null,
             fileLabel: 'No file selected',
+            fileType: '',
             imageURL: '#',
             isLoading: false,
             displayResult: false,
@@ -30,6 +31,7 @@ class DetectPage extends Component{
 
         this.captureFile = this.captureFile.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
+        this.isValidFileUploaded = this.isValidFileUploaded.bind(this);
     }
 
     componentDidMount(){
@@ -43,37 +45,55 @@ class DetectPage extends Component{
           })     
     }
 
+    isValidFileUploaded(file) {
+        const validFileFormat = ['image', 'video'];
+        const fileFormat = file.type.split('/')[0];
+        return validFileFormat.includes(fileFormat);
+    }
+
     captureFile(event){
         try{
             event.preventDefault();
+            if(event.target.files.length < 1){
+                window.alert("Upload media file!");
+                return;
+            }
             const file = event.target.files[0];
-            const url = URL.createObjectURL(file);
+            
+            if(this.isValidFileUploaded(file)){
+                const url = URL.createObjectURL(file);
 
-            this.setState({
-                fileLabel: file.name,
-                imageURL: url
-            });
-            const reader = new window.FileReader();
-            reader.readAsArrayBuffer(file);
-            reader.onloadend = () => {
-                this.setState({ 
-                    buffer : Buffer(reader.result),
-                }, async () => {
-                    var startTime = performance.now();
-                    await this.onSubmit();
-                    var endTime = performance.now();
-                    console.debug(`Call to onSubmit took ${endTime - startTime} milliseconds or ${(endTime - startTime)/1000} seconds`);
-                    
-                    startTime = performance.now();
-                    await searchBlockChainFromLatest(this.state.web3, this.state.buffer);
-                    endTime = performance.now();
-                    console.debug(`Call to searchBlockChainFromLatest took ${endTime - startTime} milliseconds or ${(endTime - startTime)/1000} seconds`);
+                this.setState({
+                    fileType: file.type.split('/')[0],
+                    fileLabel: file.name,
+                    imageURL: url
+                });
+                const reader = new window.FileReader();
+                reader.readAsArrayBuffer(file);
+                reader.onloadend = () => {
+                    this.setState({ 
+                        buffer : Buffer(reader.result),
+                    }, async () => {
+                        var startTime = performance.now();
+                        await this.onSubmit();
+                        var endTime = performance.now();
+                        console.debug(`Call to onSubmit took ${endTime - startTime} milliseconds or ${(endTime - startTime)/1000} seconds`);
+                        
+                        startTime = performance.now();
+                        await searchBlockChainFromLatest(this.state.web3, this.state.buffer);
+                        endTime = performance.now();
+                        console.debug(`Call to searchBlockChainFromLatest took ${endTime - startTime} milliseconds or ${(endTime - startTime)/1000} seconds`);
 
-                    startTime = performance.now();
-                    await searchBlockChainFromEarliest(this.state.web3, this.state.buffer);
-                    endTime = performance.now();
-                    console.debug(`Call to searchBlockChainFromEarliest took ${endTime - startTime} milliseconds or ${(endTime - startTime)/1000} seconds`);
-                  });
+                        startTime = performance.now();
+                        await searchBlockChainFromEarliest(this.state.web3, this.state.buffer);
+                        endTime = performance.now();
+                        console.debug(`Call to searchBlockChainFromEarliest took ${endTime - startTime} milliseconds or ${(endTime - startTime)/1000} seconds`);
+                    });
+            }
+            }
+            else{
+                window.alert("Currently only image and video files can be uploaded for deepfake detection!");
+                return;
             }
         }
         catch(error){
@@ -127,34 +147,34 @@ class DetectPage extends Component{
             <h2>Loading..</h2>
             :
             <div className="section">
-                <div class="big-text">Detect Deepfake</div>
-                <div class="steps">
-                    <div class="single-step">
+                <div className="big-text">Detect Deepfake</div>
+                <div className="steps">
+                    <div className="single-step">
                         <img src={clickImg} alt="Click" />
-                        <div class="single-step-content">
-                            <div class="main-title">Click</div>
+                        <div className="single-step-content">
+                            <div className="main-title">Click</div>
                             <p>Take or choose a media from your device</p>
                         </div>
                     </div>
                     
-                    <div class="single-step">
+                    <div className="single-step">
                         <img src={uploadImg} alt="Upload" />
-                        <div class="single-step-content">
-                        <div class="main-title">Upload</div>
+                        <div className="single-step-content">
+                        <div className="main-title">Upload</div>
                         <p>Upload the media to <b>Source of Truth</b> DApp</p>
                         </div>
                     </div>
-                    <div class="single-step">
+                    <div className="single-step">
                     <img src={detectImg} alt="Detect" />
-                    <div class="single-step-content">
-                        <div class="main-title">Detect</div>
+                    <div className="single-step-content">
+                        <div className="main-title">Detect</div>
                         <p>Detect if the media is original or deepfake</p>
                     </div>
                     </div>
                 </div>
 
                 <br/>
-                <h1>Browse Files</h1>
+                <h2>Browse Media File</h2>
                 <form>
                     <div className="file-input">                    
                     <input type='file' onChange={this.captureFile}/>
@@ -181,8 +201,15 @@ class DetectPage extends Component{
                                 web3={this.state.web3}
                             />
                             </div>
+                        }
+                        {
+                            this.state.fileType === "image" ?
+                            <img src={this.state.imageURL} alt="" className="input-img"/> 
+                            :
+                            <video width="320" height="240" controls>
+                                <source src={this.state.imageURL}/>
+                            </video>
                         }                   
-                        <img src={this.state.imageURL} alt="" className="input-img"/> 
 
                     </div>
                     : null

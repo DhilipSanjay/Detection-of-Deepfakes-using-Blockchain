@@ -32,6 +32,7 @@ recordRoutes.route("/ipfsRecord/insert").post((req, response) =>{
     let dbConnect = dbo.getDb("blockchain_data");
     let document = {
         ipfsHash: req.body.ipfsHash,
+        fileType: req.body.fileType,
         transactionHash: req.body.transactionHash,
         account: req.body.account
     };

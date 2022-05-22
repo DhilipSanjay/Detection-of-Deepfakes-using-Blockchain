@@ -10,7 +10,7 @@ class AllOriginalsTable extends Component{
                     <tr>
                         <th>Serial Number</th>
                         <th>Ipfs Hash &<br/>Transaction Hash</th>
-                        <th>Account Address</th>
+                        <th>Owner Address</th>
                         <th>Preview</th>
                     </tr>
                     </thead>
@@ -32,7 +32,16 @@ class AllOriginalsTable extends Component{
                                 <td>{i+1}</td>
                                 <td>{transaction.ipfsHash}<br/>{transaction.transactionHash}</td>
                                 <td>{transaction.account}</td>
-                                <td><img width="100px" src={`http://${config.ipfs_host}/ipfs/${transaction.ipfsHash}`} alt="" /></td>
+                                <td>
+                                {
+                                    transaction.fileType === "image"?
+                                    <img width="100px" src={`http://${config.ipfs_host}/ipfs/${transaction.ipfsHash}`} alt="" />
+                                    :
+                                    <video width="100" controls>
+                                        <source src={`http://${config.ipfs_host}/ipfs/${transaction.ipfsHash}`}/>
+                                    </video>
+                                }
+                                </td>
                             </tr>
                         )
                     }
